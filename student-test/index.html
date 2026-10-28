@@ -90,14 +90,14 @@
 <script>
 (function(){
  "use strict";
- var RELEASE_TIME = new Date("2026-10-29T10:30:00");
+ var RELEASE_TIME = new Date("2026-10-29T10:30:00-04:00");
  if (Date.now() < RELEASE_TIME.getTime()) {
    var wrap = document.querySelector('.wrap');
    if (wrap) {
      wrap.innerHTML = [
        '<div style="max-width:680px;margin:40px auto 0;padding:28px 24px;border:1px solid #cfd6e4;border-radius:14px;background:#fff;box-shadow:0 10px 28px rgba(37,87,167,.08);">',
        '<h2 style="margin:0 0 12px;color:#2557a7;">Assessment Not Available Yet</h2>',
-       '<p style="margin:0 0 10px;line-height:1.6;">This unit test is scheduled to open at <strong>10:30 AM on October 29, 2026</strong>.</p>',
+       '<p style="margin:0 0 10px;line-height:1.6;">This unit test is scheduled to open at <strong>10:30 AM Eastern Time (EDT / Avon, CT)</strong> on October 29, 2026.</p>',
        '<p style="margin:0;line-height:1.6;">Please return at the release time to access the assessment.</p>',
        '</div>'
      ].join('');
