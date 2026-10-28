@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit Test — Solving &amp; Data</title>
+<style>
+ :root{--ink:#1d2330;--muted:#5b6678;--accent:#2557a7;--line:#cfd6e4;--soft:#eef3fb;--good:#1f8a4c;--fs:1}
+ :root.hc{--ink:#000;--muted:#000;--accent:#0030c0;--line:#000;--soft:#fff;--good:#006b2e}
+ *{box-sizing:border-box} html,body{margin:0}
+ body{background:#f4f6fb;color:var(--ink);font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;
+   line-height:1.4;font-size:calc(15px*var(--fs));-webkit-text-size-adjust:100%;padding-bottom:40px}
+ header.top{position:sticky;top:0;z-index:6;background:var(--accent);color:#fff;padding:9px 14px;
+   display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+ header.top h1{margin:0;font-size:calc(1.1rem*var(--fs))}
+ .tools{display:flex;gap:6px;flex-wrap:wrap}
+ .tools button{font-family:inherit;cursor:pointer;border:0;border-radius:8px;padding:7px 10px;font-weight:700;
+   background:rgba(255,255,255,.2);color:#fff;font-size:calc(.82rem*var(--fs))}
+ .tools button.pdf{background:#fff;color:var(--accent)}
+ .wrap{max-width:780px;margin:0 auto;padding:14px}
+ .doc-h{border-bottom:3px solid var(--accent);padding-bottom:8px;margin-bottom:8px}
+ .doc-h h2{margin:0;font-size:calc(1.3rem*var(--fs))}
+ .doc-h .meta{color:var(--muted);font-size:calc(.95rem*var(--fs));margin-top:2px}
+ .namerow{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:8px 0}
+ .namerow label{font-weight:700}
+ .namerow input{font-family:inherit;font-size:calc(15px*var(--fs));padding:7px 9px;border:1px solid var(--line);border-radius:7px}
+ .banner{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:9px 12px;margin:8px 0 14px;font-size:calc(.93rem*var(--fs))}
+ h3.part{color:var(--accent);font-size:calc(1.02rem*var(--fs));border-bottom:1px solid var(--line);
+   padding-bottom:3px;margin:16px 0 6px}
+ .q{border:1px solid var(--line);border-radius:10px;background:#fff;padding:9px 13px;margin:8px 0;break-inside:avoid}
+ .q .stem{font-weight:700;font-size:calc(1.0rem*var(--fs));margin-bottom:5px}
+ .q .stem .num{color:var(--accent);margin-right:5px}
+ .q .stem .big{font-size:calc(1.08rem*var(--fs));letter-spacing:.3px}
+ .q .stem .pts{color:var(--muted);font-weight:600;font-size:calc(.8rem*var(--fs));margin-left:6px;white-space:nowrap}
+ .ansline{display:flex;align-items:center;gap:8px;margin:4px 0;flex-wrap:wrap}
+ .ansline label{color:var(--muted);font-weight:700;font-size:calc(.9rem*var(--fs))}
+ .ansline input{font-family:inherit;font-size:calc(1.0rem*var(--fs));padding:6px 9px;border:0;border-bottom:2px solid var(--accent);
+   background:transparent;min-width:150px;color:var(--ink)}
+ .worklabel{color:var(--muted);font-size:calc(.78rem*var(--fs));margin:5px 0 2px}
+ textarea.work{width:100%;min-height:46px;font-family:inherit;font-size:calc(.96rem*var(--fs));padding:7px;
+   border:1px dashed var(--line);border-radius:6px;background:#fff;color:var(--ink);resize:vertical}
+ .nlwrap{margin:4px 0 2px}
+ .nlctrls{display:flex;gap:7px;flex-wrap:wrap;margin:6px 0 2px}
+ .nlctrls button{font-family:inherit;cursor:pointer;border:1px solid var(--line);background:var(--soft);color:var(--ink);
+   border-radius:8px;padding:7px 11px;font-weight:700;font-size:calc(.85rem*var(--fs))}
+ .nlctrls button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+ .nlctrls button.clear{background:#fff}
+ .nlhint{color:var(--muted);font-size:calc(.78rem*var(--fs));font-style:italic;margin-top:2px}
+ svg.nl{width:100%;height:68px;display:block;background:#fff;border:1px solid var(--line);border-radius:8px;touch-action:manipulation}
+ .tickhit{fill:transparent;cursor:pointer}
+ .foot{color:var(--muted);font-size:calc(.82rem*var(--fs));border-top:1px solid var(--line);margin-top:16px;padding-top:9px}
+ [hidden]{display:none!important}
+ @media print{
+   @page{margin:11mm}
+   header.top{position:static;background:#fff;color:#000;border-bottom:2px solid #000}
+   .tools{display:none!important}
+   body{background:#fff;font-size:12px}
+   .q,.banner,.namerow input{border-color:#999}
+   .nlctrls{display:none!important}
+   textarea.work{min-height:38px}
+   .q{break-inside:avoid;padding:6px 10px;margin:6px 0}
+ }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Unit Test — Solving &amp; Data</h1>
+  <div class="tools">
+    <button id="aMinus">A−</button><button id="aPlus">A+</button>
+    <button id="hc">◐ Contrast</button><button id="reset">Reset</button>
+    <button id="printBtn" class="pdf">📄 Save as PDF</button>
+  </div>
+</header>
+<div class="wrap">
+  <div class="doc-h">
+    <h2>Unit Test — Solving Equations &amp; Inequalities · Decimals &amp; Data</h2>
+    <div class="meta">30 questions · <b>100 points</b> · <b>40 minutes</b> · open notes &amp; past work</div>
+  </div>
+  <div class="namerow">
+    <span><label>Name:</label> <input type="text" id="stuName" data-k="_name" placeholder="Type your name"></span>
+    <span><label>Date:</label> <input type="text" id="date" data-k="_date" style="min-width:110px"></span>
+    <span><label>Score:</label> <span style="color:var(--muted)">____ / 100</span></span>
+  </div>
+  <div class="banner">Work on your <b>own</b>. You may use your notes and past work. <b>Show your work</b> — a correct answer with no work earns partial credit. Point values are shown by each question. For the graphs, use the buttons to place your circle and shade.</div>
+
+  <div id="body"></div>
+  <div class="foot">Your typing and graphs save automatically on this device. Click <b>Save as PDF</b> when you are done.</div>
+</div>
+
+<script>
+(function(){
+ "use strict";
+ var RELEASE_TIME = new Date("2026-10-29T10:30:00");
+ if (Date.now() < RELEASE_TIME.getTime()) {
+   var wrap = document.querySelector('.wrap');
+   if (wrap) {
+     wrap.innerHTML = [
+       '<div style="max-width:680px;margin:40px auto 0;padding:28px 24px;border:1px solid #cfd6e4;border-radius:14px;background:#fff;box-shadow:0 10px 28px rgba(37,87,167,.08);">',
+       '<h2 style="margin:0 0 12px;color:#2557a7;">Assessment Not Available Yet</h2>',
+       '<p style="margin:0 0 10px;line-height:1.6;">This unit test is scheduled to open at <strong>10:30 AM on October 29, 2026</strong>.</p>',
+       '<p style="margin:0;line-height:1.6;">Please return at the release time to access the assessment.</p>',
+       '</div>'
+     ].join('');
+   }
+   return;
+ }
+ 
+ function $(id){return document.getElementById(id);}
+ function esc(s){return String(s).replace(/[&<>\"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);});}
+
+ // ---- test content (NO answers embedded) ----
+ var PARTS=[
+  {title:"Part 1 · Solving Equations", items:[
+    {n:1, type:"short", pts:2, q:"Solve: x + 16 = 7"},
+    {n:2, type:"short", pts:2, q:"Solve: x − 9 = −2"},
+    {n:3, type:"short", pts:2, q:"Solve: 8x = 72"},
+    {n:4, type:"short", pts:2, q:"Solve: x ÷ 5 = 8"},
+    {n:5, type:"short", pts:2, q:"Solve: 4x = 18"},
+    {n:6, type:"short", pts:3, q:"Solve: x + 3.7 = 9.2"},
+    {n:7, type:"short", pts:3, q:"Solve: x − 2.4 = 6.1"},
+    {n:8, type:"short", pts:3, q:"Write an equation, then solve it: seven less than a number is 12."},
+    {n:9, type:"short", pts:5, q:"Write an equation, then solve it: a number tripled, minus 4, is 17.", work:true},
+    {n:10, type:"explain", pts:5, rows:2, q:"Error analysis — Tomas solved 5x = 35 and got x = 175. What did he do wrong, and what is the correct answer?"},
+  ]},
+  {title:"Part 2 · Inequalities", items:[
+    {n:11, type:"graph", pts:3, nosol:true, lo:-8, hi:8, q:"Graph the inequality on the number line: x ≥ 2"},
+    {n:12, type:"graph", pts:4, lo:-8, hi:8, q:"Solve, then graph your answer: x + 5 < 3"},
+    {n:13, type:"graph", pts:4, lo:-8, hi:8, q:"Solve, then graph your answer: −3x ≥ 12"},
+    {n:14, type:"short", pts:3, q:"Solve: x − 6 > −1"},
+    {n:15, type:"short", pts:2, q:"Write an inequality: you must be at least 10 years old to ride."},
+    {n:16, type:"explain", pts:5, rows:2, q:"Error analysis — Rosa solved −2x < 8 and wrote x < −4. What did she do wrong, and what is the correct answer?"},
+    {n:17, type:"explain", pts:4, rows:2, q:"Create your own — write a one-step inequality whose solution is x > 3 and that does NOT need a flip. Then solve it to prove it works."},
+  ]},
+  {title:"Part 3 · Decimals, Estimation & Measurement", items:[
+    {n:18, type:"short", pts:2, q:"Round 7.368 to the nearest hundredth."},
+    {n:19, type:"short", pts:2, q:"Round 12.96 to the nearest tenth."},
+    {n:20, type:"short", pts:3, q:"Estimate: 8.9 × 6.1"},
+    {n:21, type:"short", pts:3, q:"Estimate: 161 ÷ 7.9"},
+    {n:22, type:"short", pts:2, q:"4.2 m = ______ cm", work:false},
+    {n:23, type:"short", pts:2, q:"3500 g = ______ kg", work:false},
+    {n:24, type:"explain", pts:5, rows:2, q:"Error analysis — Evan estimated 58 ÷ 2.9 by rounding to 60 ÷ 2 = 30. What did he do wrong, and what is a better estimate?"},
+  ]},
+  {title:"Part 4 · Data: Mean, Median, Mode", items:[
+    {n:25, type:"explain", pts:3, rows:2, q:"Find the mean, median, and mode of 4, 9, 7, 9, 11. Show your work."},
+    {n:26, type:"explain", pts:5, rows:2, q:"Find the mean, median, and mode of 6, 2, 9, 5, 2, 12. Show your work."},
+    {n:27, type:"explain", pts:5, rows:2, q:"A set of scores is 7, 8, 6, 7, 50. Is the mean or the median a better description of a typical score? Explain why."},
+    {n:28, type:"explain", pts:6, rows:2, q:"Create your own — make a data set of 5 numbers whose mode is 10 and whose mean is 8. Show that it works."},
+  ]},
+  {title:"Part 5 · Formulas & Application", items:[
+    {n:29, type:"short", pts:2, q:"Use the formula A = ½ b h with b = 8 and h = 9."},
+    {n:30, type:"short", pts:6, work:true, q:"A plant is 3.2 cm tall. It grows 0.6 cm each week. Write and solve an equation for how many weeks (w) until it is 6.8 cm tall."},
+  ]},
+ ];
+
+ // Load saved work FIRST so graphs render with saved state.
+ var SAVED={};
+ try{var _raw=localStorage.getItem("unittest_solving_data_v2"); if(_raw) SAVED=JSON.parse(_raw)||{};}catch(e){SAVED={};}
+ var STATE=(SAVED.__graph&&typeof SAVED.__graph==='object')?SAVED.__graph:{};
+
+ function save(){try{
+   var o={__graph:STATE};
+   document.querySelectorAll('[data-k]').forEach(function(el){o[el.dataset.k]=el.value;});
+   localStorage.setItem("unittest_solving_data_v2",JSON.stringify(o));
+ }catch(e){} }
+
+ function numberLine(it){
+   var lo=it.lo, hi=it.hi, n=it.n;
+   STATE[n]=STATE[n]||{at:null,closed:false,dir:null};
+   var W=640,H=68,padL=24,padR=24,y=33;
+   function X(v){return padL+(v-lo)/(hi-lo)*(W-padL-padR);}
+   var wrap=document.createElement('div'); wrap.className='nlwrap';
+   var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+   svg.setAttribute('class','nl'); svg.setAttribute('viewBox','0 0 '+W+' '+H); svg.setAttribute('role','img');
+   function E(t,a){var e=document.createElementNS('http://www.w3.org/2000/svg',t);for(var k in a)e.setAttribute(k,a[k]);return e;}
+   function draw(){
+     while(svg.firstChild) svg.removeChild(svg.firstChild);
+     svg.appendChild(E('line',{x1:padL-10,y1:y,x2:W-padR+10,y2:y,stroke:'#1d2330','stroke-width':2}));
+     svg.appendChild(E('polygon',{points:(padL-10)+','+y+' '+(padL-2)+','+(y-5)+' '+(padL-2)+','+(y+5),fill:'#1d2330'}));
+     svg.appendChild(E('polygon',{points:(W-padR+10)+','+y+' '+(W-padR+2)+','+(y-5)+' '+(W-padR+2)+','+(y+5),fill:'#1d2330'}));
+     var st=STATE[n];
+     if(st.at!==null && st.dir){
+       var endX = st.dir==='right' ? (W-padR+2) : (padL-2);
+       svg.appendChild(E('line',{x1:X(st.at),y1:y,x2:endX,y2:y,stroke:'#2557a7','stroke-width':5}));
+       var ar = st.dir==='right' ? (endX+','+y+' '+(endX-9)+','+(y-5)+' '+(endX-9)+','+(y+5))
+                                 : (endX+','+y+' '+(endX+9)+','+(y-5)+' '+(endX+9)+','+(y+5));
+       svg.appendChild(E('polygon',{points:ar,fill:'#2557a7'}));
+     }
+     for(var v=lo; v<=hi; v++){
+       var x=X(v);
+       svg.appendChild(E('line',{x1:x,y1:y-6,x2:x,y2:y+6,stroke:'#1d2330','stroke-width':1}));
+       var tx=E('text',{x:x,y:y+19,'text-anchor':'middle','font-size':11,fill:'#4a4a4a'}); tx.textContent=v; svg.appendChild(tx);
+       var hit=E('rect',{x:x-((W-padL-padR)/(hi-lo))/2,y:2,width:(W-padL-padR)/(hi-lo),height:H-4,class:'tickhit'});
+       (function(val){hit.addEventListener('click',function(){STATE[n].at=val;draw();save();});})(v);
+       svg.appendChild(hit);
+     }
+     if(st.at!==null){
+       svg.appendChild(E('circle',{cx:X(st.at),cy:y,r:8,fill:(st.closed?'#2557a7':'#ffffff'),stroke:'#2557a7','stroke-width':3}));
+     }
+   }
+   wrap.appendChild(svg);
+   var ctr=document.createElement('div'); ctr.className='nlctrls';
+   var bTog=document.createElement('button');
+   var bL=document.createElement('button'); bL.innerHTML='◀ Shade left';
+   var bR=document.createElement('button'); bR.innerHTML='Shade right ▶';
+   var bC=document.createElement('button'); bC.className='clear'; bC.textContent='Clear';
+   function sync(){
+     bTog.textContent = STATE[n].closed ? '● Closed dot' : '○ Open dot';
+     bTog.className = STATE[n].closed ? 'on' : '';
+     bL.className = STATE[n].dir==='left' ? 'on' : '';
+     bR.className = STATE[n].dir==='right' ? 'on' : '';
+   }
+   bTog.onclick=function(){STATE[n].closed=!STATE[n].closed;sync();draw();save();};
+   bL.onclick=function(){STATE[n].dir='left';sync();draw();save();};
+   bR.onclick=function(){STATE[n].dir='right';sync();draw();save();};
+   bC.onclick=function(){STATE[n]={at:null,closed:false,dir:null};sync();draw();save();};
+   ctr.appendChild(bTog);ctr.appendChild(bL);ctr.appendChild(bR);ctr.appendChild(bC);
+   wrap.appendChild(ctr);
+   var hint=document.createElement('div'); hint.className='nlhint'; hint.textContent='Tap a number to place your dot. Choose open or closed, then shade left or right.';
+   wrap.appendChild(hint);
+   sync(); draw();
+   return wrap;
+ }
+
+ var body=$('body');
+ PARTS.forEach(function(part){
+   var h=document.createElement('h3'); h.className='part'; h.textContent=part.title; body.appendChild(h);
+   part.items.forEach(function(it){
+     var d=document.createElement('div'); d.className='q';
+     var stem=document.createElement('div'); stem.className='stem';
+     stem.innerHTML='<span class="num">'+it.n+'.</span><span class="big">'+esc(it.q)+'</span><span class="pts">('+it.pts+' pt'+(it.pts===1?'':'s')+')</span>';
+     d.appendChild(stem);
+     if(it.type==='short'){
+       var al=document.createElement('div'); al.className='ansline';
+       var lb=document.createElement('label'); lb.textContent='Answer:';
+       var inp=document.createElement('input'); inp.type='text'; inp.dataset.k='a'+it.n; inp.autocomplete='off';
+       al.appendChild(lb); al.appendChild(inp); d.appendChild(al);
+       if(it.work!==false){
+         var wl=document.createElement('div'); wl.className='worklabel'; wl.textContent='Show your work';
+         var ta=document.createElement('textarea'); ta.className='work'; ta.dataset.k='w'+it.n; d.appendChild(wl); d.appendChild(ta);
+       }
+     } else if(it.type==='graph'){
+       if(!it.nosol){
+         var al2=document.createElement('div'); al2.className='ansline';
+         var lb2=document.createElement('label'); lb2.textContent='Solution:';
+         var inp2=document.createElement('input'); inp2.type='text'; inp2.dataset.k='a'+it.n; inp2.autocomplete='off';
+         al2.appendChild(lb2); al2.appendChild(inp2); d.appendChild(al2);
+       }
+       d.appendChild(numberLine(it));
+     } else { // explain
+       var ta2=document.createElement('textarea'); ta2.className='work'; ta2.dataset.k='a'+it.n;
+       ta2.style.minHeight=((it.rows||2)*23)+'px'; d.appendChild(ta2);
+     }
+     body.appendChild(d);
+   });
+ });
+
+ // restore typed answers (graphs already rendered from STATE)
+ document.querySelectorAll('[data-k]').forEach(function(el){
+   if(SAVED[el.dataset.k]!==undefined) el.value=SAVED[el.dataset.k];
+ });
+ document.addEventListener('input',save,true);
+
+ // toolbar
+ var fs=1;function ap(){document.documentElement.style.setProperty('--fs',fs.toFixed(2));try{localStorage.setItem('ut_fs',fs);}catch(e){} }
+ try{var s=parseFloat(localStorage.getItem('ut_fs'));if(s){fs=s;ap();}}catch(e){}
+ try{if(localStorage.getItem('ut_hc')==='1')document.documentElement.classList.add('hc');}catch(e){}
+ $('aPlus').onclick=function(){fs=Math.min(1.6,fs+0.1);ap();};
+ $('aMinus').onclick=function(){fs=Math.max(0.85,fs-0.1);ap();};
+ $('hc').onclick=function(){var on=document.documentElement.classList.toggle('hc');try{localStorage.setItem('ut_hc',on?'1':'0');}catch(e){} };
+ $('printBtn').onclick=function(){try{var nm=($('stuName').value||'').trim();document.title=nm?(nm+' - Unit Test'):'Unit Test';}catch(e){}window.print();};
+ $('reset').onclick=function(){if(confirm('Clear everything you typed and drew on this device?')){try{localStorage.removeItem('unittest_solving_data_v2');}catch(e){}location.reload();}};
+})();
+</script>
+</body>
+</html>
